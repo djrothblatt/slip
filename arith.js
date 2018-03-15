@@ -7,7 +7,18 @@ const arithmeticTable = {
     "+": makeVariadicArith((x, y) => x + y, 0),
     "-": makeVariadicArith((x, y) => x - y, 0, 1),
     "*": makeVariadicArith((x, y) => x * y, 1),
-    "/": makeVariadicArith((x, y) => x / y, 1, 1)
+    "/": makeVariadicArith((x, y) => x / y, 1, 1),
+    "=": (first, ...rest) => rest.every(val => val === first),
+    "/=": (first, ...rest) => {
+        const seen = [first];
+        for (const item of rest) {
+            if (seen.some(x => item === x)) {
+                return false;
+            }
+            seen.push(item);
+        };
+        return true;
+    }
 };
 
 module.exports = arithmeticTable;
