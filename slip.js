@@ -1,5 +1,11 @@
-const { flip, partial, compose } = require('./helper');
-const arithmeticTable            = require('./arith');
+const {
+    flip,
+    partial,
+    compose,
+    combineTables
+}                     = require('./helper.js');
+const arithmeticTable = require('./arith.js');
+const consTable       = require('./cons.js');
 
 //--------------------------------------------------------------------------------
 
