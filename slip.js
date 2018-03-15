@@ -9,7 +9,11 @@ const consTable       = require('./cons.js');
 
 //--------------------------------------------------------------------------------
 
-const lexSexp = (string) => string.replace(/\(/g, '( ').replace(/\)/g, ' )').split(' ');
+const lexSexp = (string) => string
+      .replace(/\(/g, ' ( ')
+      .replace(/\)/g, ' ) ')
+      .trim()
+      .split(/ +/);
 
 const parseSexp = (tokens) => {
     const parsed = [[]];
@@ -23,14 +27,18 @@ const parseSexp = (tokens) => {
             parsed[parsed.length - 1].push(token);
         }
     });
-    return parsed[0];
+    const inner = parsed[0];
+    if (Array.isArray(inner)) {
+        return inner[0];
+    }
+    return inner;
 };
 
-const interpretSexp = (sexp, table={}) => {
-    if (sexp instanceof Array) {
+const evalSexp = (sexp, table={}) => {
+    if (Array.isArray(sexp)) {
         const [car, ...cdr] = sexp;
-        const operator = interpretSexp(car, table);
-        const operands = cdr.map(rand => interpretSexp(rand, table));
+        const operator = evalSexp(car, table);
+        const operands = cdr.map(rand => evalSexp(rand, table));
         return operator(...operands);
     }
 
@@ -38,7 +46,5 @@ const interpretSexp = (sexp, table={}) => {
 };
 
 const stringToSexp = compose(parseSexp, lexSexp);
-
-const evalSexp = (sexp, table) => interpretSexp(sexp[0], table);
 
 const makeInterpreter = (...tables) => compose(partial(flip(evalSexp), combineTables(...tables)), stringToSexp);
