@@ -4,9 +4,12 @@ const identity = (x) => x;
 const compose2 = (f, g) => x => f(g(x));
 const compose = (...fns) => fns.reduce(compose2, identity);
 
+const combineTables = (...tables) => Object.assign({}, ...tables);
+
 module.exports = {
     flip,
     partial,
     compose,
-    identity
+    identity,
+    combineTables
 };

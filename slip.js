@@ -35,4 +35,4 @@ const stringToSexp = compose(parseSexp, lexSexp);
 
 const evalSexp = (sexp, table) => interpretSexp(sexp[0], table);
 
-const makeInterpreter = (table) => compose(partial(flip(evalSexp), table), stringToSexp);
+const makeInterpreter = (...tables) => compose(partial(flip(evalSexp), combineTables(...tables)), stringToSexp);
