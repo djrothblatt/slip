@@ -1,0 +1,9 @@
+* Slip
+** What it is
+   Slip is a (family of) simple Lisp interpreters that I'm working on
+   to get a better understanding of interpreters as a whole. So far
+   it's been a lot of fun!
+** Slip-1
+   The first in the Slip family will, appropriately, be a Lisp-1. I'm
+   basically attempting to implement an ever-larger subset of Scheme
+   here. ~(joke "Continuations are a *long* way off")~
