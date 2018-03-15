@@ -1,8 +1,5 @@
-const flip = (f) => (x, y) => f(y,x);
-const partial = (f, ...args) => (...moreArgs) => f(...args, ...moreArgs);
-const compose2 = (f, g) => x => f(g(x));
-const identity = (x) => x;
-const compose = (...fns) => fns.reduce(compose2, identity);
+const { flip, partial, compose } = require('./helper');
+const arithmeticTable            = require('./arith');
 
 //--------------------------------------------------------------------------------
 
@@ -34,21 +31,8 @@ const interpretSexp = (sexp, table={}) => {
     return parseFloat(sexp) || table[sexp] || sexp;
 };
 
-const makeVariadicArith = (fn, identity, requiredArgs=0) => (...args) =>
-    args.length >= requiredArgs ?
-    args.reduce(fn, identity) :
-    new Error(`Requires ${requiredArgs} arguments!`);
-
-const arithmeticTable = {
-    "+": makeVariadicArith((x, y) => x + y, 0),
-    "-": makeVariadicArith((x, y) => x - y, 0, 1),
-    "*": makeVariadicArith((x, y) => x * y, 1),
-    "/": makeVariadicArith((x, y) => x / y, 1, 1)
-};
-
 const stringToSexp = compose(parseSexp, lexSexp);
+
 const evalSexp = (sexp, table) => interpretSexp(sexp[0], table);
 
 const makeInterpreter = (table) => compose(partial(flip(evalSexp), table), stringToSexp);
-
-const arithmeticInterpreter = makeInterpreter(arithmeticTable);
