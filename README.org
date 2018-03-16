@@ -1,3 +1,5 @@
+# -*- org-todo-keyword-faces: (("TODO" . org-warning) ("STARTED" . "yellow") ("DONE" . org-done)); -*-
+#+TODO: TODO STARTED | DONE
 * Slip
 ** What it is
    Slip is a (family of) simple Lisp interpreters that I'm working on
@@ -6,4 +8,16 @@
 ** Slip-1
    The first in the Slip family will, appropriately, be a Lisp-1. I'm
    basically attempting to implement an ever-larger subset of Scheme
-   here. ~(joke "Continuations are a *long* way off")~
+   here. ~(make-joke "Continuations are a *long* way off")~
+*** TODO Upcoming features [0/1]
+**** TODO Special forms [1/2]
+***** DONE ~lambda~
+      CLOSED: [2018-03-16 Fri 16:36]
+      Anonymous functions are the cornerstone of any good Scheme.
+***** TODO ~define~
+      Being able to bind values to variables will be very important to
+      making a reasonably usable program
+****** TODO ~defun~-style syntax
+       While using ~define~ with an explicit ~lambda~ is fine, Scheme
+       also allows a form that looks more like the (Common|Emacs) Lisp
+       form ~defun~.
