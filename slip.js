@@ -1,8 +1,9 @@
 const {
+    combineTables,
+    compose,
     flip,
     partial,
-    compose,
-    combineTables
+    zipObject
 }                     = require('./helper.js');
 const arithmeticTable = require('./arith.js');
 const consTable       = require('./cons.js');
@@ -15,6 +16,8 @@ const lexSexp = (string) => string
       .trim()
       .split(/ +/);
 
+const parseToken = (token) => parseFloat(token) || token;
+
 const parseSexp = (tokens) => {
     const parsed = [[]];
     tokens.forEach(token => {
@@ -24,7 +27,7 @@ const parseSexp = (tokens) => {
             const temp = parsed.pop();
             parsed[parsed.length - 1].push(temp);
         } else {
-            parsed[parsed.length - 1].push(token);
+            parsed[parsed.length - 1].push(parseToken(token));
         }
     });
     const inner = parsed[0];
@@ -37,14 +40,27 @@ const parseSexp = (tokens) => {
 const evalSexp = (sexp, table={}) => {
     if (Array.isArray(sexp)) {
         const [car, ...cdr] = sexp;
+        // special form
+        if (['lambda', 'λ', 'ל'].includes(car)) {
+            const [args, body] = cdr;
+            return (...params) => evalSexp(body, { ...table, ...zipObject(args, params) });
+        }
+
+        // function call
         const operator = evalSexp(car, table);
         const operands = cdr.map(rand => evalSexp(rand, table));
-        return operator(...operands);
+        return operator.call(null, ...operands);
     }
 
-    return parseFloat(sexp) || table[sexp] || sexp;
+    return table[sexp] || sexp;
 };
 
 const stringToSexp = compose(parseSexp, lexSexp);
 
 const makeInterpreter = (...tables) => compose(partial(flip(evalSexp), combineTables(...tables)), stringToSexp);
+
+module.exports = {
+    stringToSexp,
+    evalSexp,
+    makeInterpreter
+};
