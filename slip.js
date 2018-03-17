@@ -47,7 +47,14 @@ const evalSexp = (sexp, table={}) => {
         }
         if (car === 'define') {
             const [label, val] = cdr; // (define label val)
-            table[label] = evalSexp(val, table);
+            if (Array.isArray(label)) { // (define (name args) val)
+                // eventually we'll have macros and we can implement this with them
+                // till then, we add the defun-style define here
+                const [name, ...args] = label;
+                evalSexp(['define', name, ['lambda', args, val]], table);
+            } else {
+                table[label] = evalSexp(val, table);
+            }
             return null; // define shouldn't return anything useful
         }
 
