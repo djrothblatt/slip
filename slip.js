@@ -41,6 +41,12 @@ const evalSexp = (sexp, table={}) => {
     if (Array.isArray(sexp)) {
         const [car, ...cdr] = sexp;
         // special forms
+        if (car === 'if') {
+            const [test, consequent, alternative] = cdr;
+            return evalSexp((evalSexp(test, table) ?
+                             consequent :
+                             alternative), table);
+        }
         if (['lambda', 'λ', 'ל'].includes(car)) {
             const [args, body] = cdr; // (lambda (arg1 arg2 ...) body)
             return (...params) => evalSexp(body, { ...table, ...zipObject(args, params) });
