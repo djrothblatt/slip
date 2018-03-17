@@ -38,10 +38,36 @@ const parseSexp = (tokens) => {
 const evalSexp = (sexp, table={}) => {
     if (Array.isArray(sexp)) {
         const [car, ...cdr] = sexp;
-        // special form
+        // special forms
+        if (car === 'if') {
+            const [test, consequent, alternative] = cdr;
+            return evalSexp((evalSexp(test, table) ?
+                             consequent :
+                             alternative), table);
+        }
         if (['lambda', 'λ', 'ל'].includes(car)) {
-            const [args, body] = cdr;
+            const [args, body] = cdr; // (lambda (arg1 arg2 ...) body)
             return (...params) => evalSexp(body, { ...table, ...zipObject(args, params) });
+        }
+        if (car === 'define') {
+            const [label, val] = cdr; // (define label val)
+            if (Array.isArray(label)) { // (define (name args) val)
+                // eventually we'll have macros and we can implement this with them
+                // till then, we add the defun-style define here
+                const [name, ...args] = label;
+                evalSexp(['define', name, ['lambda', args, val]], table);
+            } else {
+                table[label] = evalSexp(val, table);
+            }
+            return null; // define shouldn't return anything useful
+        }
+        if (car === 'set!') {
+            const [label, val] = cdr;
+            if (!(label in table)) {
+                throw new Error(`set! requires that ${label} be defined first. Try (define ${label} ${val})`);
+            }
+            table[label] = val;
+            return null;
         }
 
         // function call
