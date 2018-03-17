@@ -57,6 +57,14 @@ const evalSexp = (sexp, table={}) => {
             }
             return null; // define shouldn't return anything useful
         }
+        if (car === 'set!') {
+            const [label, val] = cdr;
+            if (!(label in table)) {
+                throw new Error(`set! requires that ${label} be defined first. Try (define ${label} ${val})`);
+            }
+            table[label] = val;
+            return null;
+        }
 
         // function call
         const operator = evalSexp(car, table);
