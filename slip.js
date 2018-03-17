@@ -40,10 +40,15 @@ const parseSexp = (tokens) => {
 const evalSexp = (sexp, table={}) => {
     if (Array.isArray(sexp)) {
         const [car, ...cdr] = sexp;
-        // special form
+        // special forms
         if (['lambda', 'λ', 'ל'].includes(car)) {
-            const [args, body] = cdr;
+            const [args, body] = cdr; // (lambda (arg1 arg2 ...) body)
             return (...params) => evalSexp(body, { ...table, ...zipObject(args, params) });
+        }
+        if (car === 'define') {
+            const [label, val] = cdr; // (define label val)
+            table[label] = evalSexp(val, table);
+            return null; // define shouldn't return anything useful
         }
 
         // function call
