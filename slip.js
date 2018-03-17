@@ -5,8 +5,6 @@ const {
     partial,
     zipObject
 }                     = require('./helper.js');
-const arithmeticTable = require('./arith.js');
-const consTable       = require('./cons.js');
 
 //--------------------------------------------------------------------------------
 
