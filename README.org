@@ -10,14 +10,34 @@
    basically attempting to implement an ever-larger subset of Scheme
    here. ~(make-joke "Continuations are a *long* way off")~
 *** TODO Upcoming features [0/1]
-**** TODO Special forms [1/2]
+**** TODO Special forms [4/5]
 ***** DONE ~lambda~
       CLOSED: [2018-03-16 Fri 16:36]
       Anonymous functions are the cornerstone of any good Scheme.
-***** TODO ~define~
+      Users may use ~lambda~, ~λ~, or ~ל~.
+****** Example
+       ~((lambda (x) (- x 3)) 5)~
+       ~(define (add2) (ל (n) (+ n 2)))~
+***** DONE ~define~
+      CLOSED: [2018-03-18 Sun 11:20]
       Being able to bind values to variables will be very important to
       making a reasonably usable program
-****** TODO ~defun~-style syntax
+****** DONE ~defun~-style syntax
+       CLOSED: [2018-03-18 Sun 11:20]
        While using ~define~ with an explicit ~lambda~ is fine, Scheme
        also allows a form that looks more like the (Common|Emacs) Lisp
        form ~defun~.
+***** DONE ~set!~
+      CLOSED: [2018-03-18 Sun 11:34]
+      Scheme allows variable mutation using ~set!~. 
+***** DONE ~if~
+      CLOSED: [2018-03-18 Sun 11:47]
+      Conditional logic is one of the most important things a
+      programming language should have.
+      (Unless it's [[https://en.wikipedia.org/wiki/APL_(programming_language)][APL]], maybe...)
+      Slip should be able to do this too.
+***** TODO ~begin~
+      This special form allows the sequencing of expressions. Usually
+      this is useful for side effects.
+****** Example
+       ~(begin (set! x 14) (* x 12))~
