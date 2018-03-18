@@ -27,7 +27,7 @@ const parseSexp = (tokens) => {
         } else if (token === ')') {
             unmatchedParens--;
             if (unmatchedParens < 0) {
-                throw new SyntaxError('UnmatchedCloseParenError');
+                throw { name: 'ParseError', message: 'UnmatchedCloseParenError'};
             }
             const temp = parsed.pop();
             parsed[parsed.length - 1].push(temp);
@@ -36,7 +36,7 @@ const parseSexp = (tokens) => {
         }
     });
     if (unmatchedParens !== 0) {
-        throw new SyntaxError('UnmatchedOpenParenError');
+        throw { name: 'ParseError', message: 'UnmatchedOpenParenError'};
     }
     const inner = parsed[0];
     if (Array.isArray(inner)) {
