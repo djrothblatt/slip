@@ -17,17 +17,26 @@ const lexSexp = (string) => string
 const parseToken = (token) => parseFloat(token) || token;
 
 const parseSexp = (tokens) => {
+    let unmatchedParens = 0;
     const parsed = [[]];
     tokens.forEach(token => {
         if (token === '(') {
+            unmatchedParens++;
             parsed.push([]);
         } else if (token === ')') {
+            unmatchedParens--;
+            if (unmatchedParens < 0) {
+                throw new SyntaxError('UnmatchedCloseParenError');
+            }
             const temp = parsed.pop();
             parsed[parsed.length - 1].push(temp);
         } else {
             parsed[parsed.length - 1].push(parseToken(token));
         }
     });
+    if (unmatchedParens !== 0) {
+        throw new SyntaxError('UnmatchedOpenParenError');
+    }
     const inner = parsed[0];
     if (Array.isArray(inner)) {
         return inner[0];
