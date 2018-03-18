@@ -13,7 +13,7 @@ const r = repl.start({
     eval: (cmd, context, filename, callback) => {
         let res;
         try {
-            res = interpreter(cmd.replace(/\n/, ' ').trim());
+            res = interpreter(cmd);
         } catch (e) {
             if (e.message === 'UnmatchedOpenParenError') {
                 return callback(new repl.Recoverable(e));
