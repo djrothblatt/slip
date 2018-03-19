@@ -1,3 +1,8 @@
+const cons = (car, cdr) => [car, cdr];
+const list = (...items) => items.length === 0 ? [] : cons(items[0], list(...items.slice(1)));
+
+//--------------------------------------------------------------------------------
+
 const combineTables = (...tables) => Object.assign({}, ...tables);
 const compose2 = (f, g) => x => f(g(x));
 const compose = (...fns) => fns.reduce(compose2, identity);
@@ -12,6 +17,8 @@ const zipObject = (xs, ys) =>
       }, {});
 
 module.exports = {
+    cons,
+    list,
     combineTables,
     compose,
     flip,

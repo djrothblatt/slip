@@ -1,4 +1,6 @@
 const {
+    cons,
+    list,
     combineTables,
     compose,
     flip,
