@@ -73,7 +73,7 @@ const evalSexp = (sexp, table={}) => {
         // function call
         const operator = evalSexp(car, table);
         const operands = cdr.map(rand => evalSexp(rand, table));
-        return operator.call(null, ...operands);
+        return operator(...operands);
     }
 
     return table[sexp] || sexp;
