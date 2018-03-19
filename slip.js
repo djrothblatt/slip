@@ -39,6 +39,9 @@ const evalSexp = (sexp, table={}) => {
     if (Array.isArray(sexp)) {
         const [car, ...cdr] = sexp;
         // special forms
+        if (car === 'quote') {
+            return cdr[0];
+        }
         if (car === 'if') {
             const [test, consequent, alternative] = cdr;
             return evalSexp((evalSexp(test, table) ?
