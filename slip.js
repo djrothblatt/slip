@@ -42,7 +42,10 @@ const evalSexp = (sexp, table={}) => {
         const [car, ...cdr] = sexp;
         // special forms
         if (car === 'quote') {
-            return cdr[0];
+            return list(...cdr[0]);
+        }
+        if (car === 'quasiquote') {
+            return expandQuasiquote(cdr, table)[0];
         }
         if (car === 'if') {
             const [test, consequent, alternative] = cdr;
