@@ -7,9 +7,6 @@ const {
 } = require('./helper.js');
 
 const {
-    car,
-    cdr,
-    cons,
     list,
     append
 } = require('./list.js');
