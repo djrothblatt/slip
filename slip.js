@@ -116,7 +116,7 @@ const evalSexp = (sexp, table={}) => {
         }
 
         // function call
-        const operator = evalSexp(car, table);
+        const operator = evalSexp(head, table);
         const operands = tail.map(rand => {
             return evalSexp(rand, table);
         });
