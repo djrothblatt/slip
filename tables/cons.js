@@ -1,7 +1,13 @@
+const { car, cdr, cons, list, append } = require('../list.js');
+
+//--------------------------------------------------------------------------------
+
 const consTable = {
-    cons: (car, cdr) => [car, cdr],
-    car: ([head, _]) => head,
-    cdr: ([_, tail]) => tail,
+    cons,
+    list,
+    append,
+    car,
+    cdr,
     null: []
 };
 
