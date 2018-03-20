@@ -1,12 +1,39 @@
 const {
-    cons,
-    list,
     combineTables,
     compose,
     flip,
     partial,
     zipObject
-}                     = require('./helper.js');
+} = require('./helper.js');
+
+const {
+    car,
+    cdr,
+    cons,
+    list,
+    append
+} = require('./list.js');
+
+//--------------------------------------------------------------------------------
+
+const expandQuasiquote = (quasiquoted, table) => {
+    if (!Array.isArray(quasiquoted)) {
+        return list(quasiquoted);
+    }
+    if (quasiquoted.length === 0) {
+        return list();
+    }
+
+    const [head, ...tail] = quasiquoted;
+    if (head === 'unquote') { // (unquote sexp) or ,sexp
+        return list(evalSexp(tail[0], table));
+    }
+    if (head === 'unquote-splicing') { // (unquote-splicing sexp) or ,@sexp
+        return evalSexp(tail[0], table);
+    }
+    return append(expandQuasiquote(head, table),
+                  expandQuasiquote(tail, table));
+};
 
 //--------------------------------------------------------------------------------
 
@@ -39,26 +66,26 @@ const parseSexp = (tokens) => {
 
 const evalSexp = (sexp, table={}) => {
     if (Array.isArray(sexp)) {
-        const [car, ...cdr] = sexp;
+        const [head, ...tail] = sexp;
         // special forms
-        if (car === 'quote') {
-            return list(...cdr[0]);
+        if (head === 'quote') {
+            return list(...tail[0]);
         }
-        if (car === 'quasiquote') {
-            return expandQuasiquote(cdr, table)[0];
+        if (head === 'quasiquote') {
+            return expandQuasiquote(tail, table);
         }
-        if (car === 'if') {
-            const [test, consequent, alternative] = cdr;
+        if (head === 'if') {
+            const [test, consequent, alternative] = tail;
             return evalSexp((evalSexp(test, table) ?
                              consequent :
                              alternative), table);
         }
-        if (['lambda', 'λ', 'ל'].includes(car)) {
-            const [args, body] = cdr; // (lambda (arg1 arg2 ...) body)
+        if (['lambda', 'λ', 'ל'].includes(head)) {
+            const [args, body] = tail; // (lambda (arg1 arg2 ...) body)
             return (...params) => evalSexp(body, { ...table, ...zipObject(args, params) });
         }
-        if (car === 'define') {
-            const [label, val] = cdr; // (define label val)
+        if (head === 'define') {
+            const [label, val] = tail; // (define label val)
             if (Array.isArray(label)) { // (define (name args) val)
                 // eventually we'll have macros and we can implement this with them
                 // till then, we add the defun-style define here
@@ -69,8 +96,8 @@ const evalSexp = (sexp, table={}) => {
             }
             return null; // define shouldn't return anything useful
         }
-        if (car === 'set!') {
-            const [label, val] = cdr;
+        if (head === 'set!') {
+            const [label, val] = tail;
             if (!(label in table)) {
                 throw new Error(`set! requires that ${label} be defined first. Try (define ${label} ${val})`);
             }
@@ -79,8 +106,10 @@ const evalSexp = (sexp, table={}) => {
         }
 
         // function call
-        const operator = evalSexp(car, table);
-        const operands = cdr.map(rand => evalSexp(rand, table));
+        const operator = evalSexp(head, table);
+        const operands = tail.map(rand => {
+            return evalSexp(rand, table);
+        });
         return operator.call(null, ...operands);
     }
 
