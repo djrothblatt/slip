@@ -91,6 +91,9 @@ const evalSexp = (sexp, table={}) => {
             const [args, body] = tail; // (lambda (arg1 arg2 ...) body)
             return (...params) => evalSexp(body, { ...table, ...zipObject(args, params) });
         }
+        if (head === 'begin') { // (begin form1 ...)
+            return tail.reduce((previousVal, currentSexp) => evalSexp(currentSexp, table), null);
+        }
         if (head === 'define') {
             const [label, val] = tail; // (define label val)
             if (Array.isArray(label)) { // (define (name args) val)
