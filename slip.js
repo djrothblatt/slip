@@ -92,7 +92,7 @@ const evalSexp = (sexp, table={}) => {
             return (...params) => evalSexp(body, { ...table, ...zipObject(args, params) });
         }
         if (head === 'begin') { // (begin form1 ...)
-            return tail.reduce((previousVal, currentSexp) => evalSexp(currentSexp, table), null);
+            return tail.reduce((_, form) => evalSexp(form, table), null);
         }
         if (head === 'define') {
             const [label, val] = tail; // (define label val)
