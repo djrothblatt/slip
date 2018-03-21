@@ -87,6 +87,28 @@ const evalSexp = (sexp, table={}) => {
                              consequent :
                              alternative), table);
         }
+        if (head === 'let') {
+            // TODO: add named let
+            const [bindings, body] = tail; // (let (b1 b2 ...) body)
+            const evaluatedBindings = bindings.reduce(
+                (out, [variable, value]) => {
+                    out[variable] = evalSexp(value, table);
+                    return out;
+                },
+                {...table});
+            return evalSexp(body, { ...table, ...evaluatedBindings });
+        }
+        if (head === 'let*') {
+            const [bindings, body] = tail; // (let* (b1 b2 ...) body)
+            const evaluatedBindings = bindings.reduce(
+                (out, [variable, value]) => {
+                    out[variable] = evalSexp(value, out);
+                    return out;
+                },
+                {...table}
+            );
+            return evalSexp(body, { ...table, ...evaluatedBindings });
+        }
         if (['lambda', 'λ', 'ל'].includes(head)) {
             const [args, body] = tail; // (lambda (arg1 arg2 ...) body)
             return (...params) => evalSexp(body, { ...table, ...zipObject(args, params) });
