@@ -137,7 +137,7 @@ const evalSexp = (sexp, table={}) => {
             }
             return null; // define shouldn't return anything useful
         }
-        if (head === 'set!') {
+        if (head === symb('set!')) {
             const [label, val] = tail;
             if (!(label in table)) {
                 throw new Error(`set! requires that ${label} be defined first. Try (define ${label} ${val})`);
