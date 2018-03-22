@@ -41,7 +41,13 @@ const lexSexp = (string) => string
       .trim()
       .split(/ +/);
 
-const parseToken = (token) => parseFloat(token) || token;
+const parseToken = (token) => {
+    const maybeNumber = parseFloat(token);
+    if (!Number.isNaN(maybeNumber)) {
+        return maybeNumber;
+    }
+    return token;
+};
 
 const parseSexp = (tokens) => {
     let unmatchedParens = 0;
