@@ -26,10 +26,10 @@ const expandQuasiquote = (quasiquoted, table) => {
     }
 
     const [head, ...tail] = quasiquoted;
-    if (head === 'unquote') { // (unquote sexp) or ,sexp
+    if (head === symb('unquote')) {   // (unquote sexp) or ,sexp
         return list(evalSexp(tail[0], table));
     }
-    if (head === 'unquote-splicing') { // (unquote-splicing sexp) or ,@sexp
+    if (head === symb('unquote-splicing')) { // (unquote-splicing sexp) or ,@sexp
         return evalSexp(tail[0], table);
     }
     return append(expandQuasiquote(head, table),
