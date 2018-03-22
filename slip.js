@@ -1,8 +1,12 @@
 const {
+    symb,
+    symbEntries,
     combineTables,
     compose,
     flip,
     partial,
+    zip,
+    unzip,
     zipObject
 } = require('./helper.js');
 
@@ -46,7 +50,7 @@ const parseToken = (token) => {
     if (!Number.isNaN(maybeNumber)) {
         return maybeNumber;
     }
-    return token;
+    return symb(token);
 };
 
 const parseSexp = (tokens) => {
@@ -71,29 +75,28 @@ const parseSexp = (tokens) => {
         throw { name: 'ParseError', message: 'UnmatchedOpenParenError'};
     }
     const inner = parsed[0];
-    if (Array.isArray(inner)) {
-        return inner[0];
-    }
-    return inner;
+    return Array.isArray(inner) ? inner[0] : inner;
 };
+
+const lambdaSymbols = ['lambda', 'λ', 'ל'].map(symb);
 
 const evalSexp = (sexp, table={}) => {
     if (Array.isArray(sexp)) {
         const [head, ...tail] = sexp;
         // special forms
-        if (head === 'quote') {
+        if (head === symb('quote')) {
             return list(...tail[0]);
         }
-        if (head === 'quasiquote') {
+        if (head === symb('quasiquote')) {
             return expandQuasiquote(tail, table);
         }
-        if (head === 'if') {
+        if (head === symb('if')) {
             const [test, consequent, alternative] = tail;
             return evalSexp((evalSexp(test, table) ?
                              consequent :
                              alternative), table);
         }
-        if (head === 'let') {
+        if (head === symb('let')) {
             // TODO: add named let
             const [bindings, body] = tail; // (let (b1 b2 ...) body)
             const evaluatedBindings = bindings.reduce(
@@ -104,7 +107,7 @@ const evalSexp = (sexp, table={}) => {
                 {...table});
             return evalSexp(body, { ...table, ...evaluatedBindings });
         }
-        if (head === 'let*') {
+        if (head === symb('let*')) {
             const [bindings, body] = tail; // (let* (b1 b2 ...) body)
             const evaluatedBindings = bindings.reduce(
                 (out, [variable, value]) => {
@@ -119,11 +122,10 @@ const evalSexp = (sexp, table={}) => {
             const [args, body] = tail; // (lambda (arg1 arg2 ...) body)
             return (...params) => evalSexp(body, { ...table, ...zipObject(args, params) });
         }
-        if (head === 'begin') { // (begin form1 ...)
+        if (head === symb('begin')) { // (begin form1 ...)
             return tail.reduce((_, form) => evalSexp(form, table), null);
         }
-        if (head === 'define') {
-            const [label, val] = tail; // (define label val)
+        if (head === symb('define')) {
             if (Array.isArray(label)) { // (define (name args) val)
                 // eventually we'll have macros and we can implement this with them
                 // till then, we add the defun-style define here
@@ -156,10 +158,11 @@ const evalSexp = (sexp, table={}) => {
 
 const stringToSexp = compose(parseSexp, lexSexp);
 
-const makeInterpreter = (...tables) => compose(partial(flip(evalSexp), combineTables(...tables)), stringToSexp);
+const makeInterpreter = (...tables) => compose(partial(flip(evalSexp), combineTables(...tables.map(symbEntries))), stringToSexp);
 
 module.exports = {
     stringToSexp,
     evalSexp,
     makeInterpreter
 };
+
