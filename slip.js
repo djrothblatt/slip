@@ -38,12 +38,52 @@ const expandQuasiquote = (quasiquoted, table) => {
 
 //--------------------------------------------------------------------------------
 
-const lexSexp = (string) => string
+const preprocessString = (string) => string
       .replace(/\n/g, ' ')
       .replace(/\(/g, ' ( ')
       .replace(/\)/g, ' ) ')
-      .trim()
-      .split(/ +/);
+      .trim();
+
+const tokenize = (string) => {
+    let readingString = false,
+        tokens = [],
+        token = '',
+        previousChar = '';
+
+    for (const char of string) {
+        if (readingString) {
+            if (char === '"' && previousChar !== '\\') {
+                token += '"';
+                tokens.push(token);
+                token = '';
+                previousChar = '';
+                readingString = false;
+            } else {
+                token += char;
+            }
+        } else if (char === ' ') {
+            token !== '' & tokens.push(token);
+            token = '';
+            previousChar = '';
+        } else if (char === '"') {
+            if (token !== '') {
+                throw { name: 'ParseError', message: 'InvalidIdentifier(")' };
+            } else {
+                readingString = true;
+                token = '"';
+            }
+        } else {
+            token += char;
+            previousChar = char;
+        }
+    }
+    if (token !== '') {
+        tokens.push(token);
+    }
+    return tokens;
+};
+
+const lexSexp = compose(tokenize, preprocessString);
 
 const parseToken = (token) => {
     const maybeNumber = parseFloat(token);
