@@ -39,9 +39,14 @@ const expandQuasiquote = (quasiquoted, table) => {
 //--------------------------------------------------------------------------------
 
 const preprocessString = (string) => string
+      .replace(/'(\(.*\)|\S+)/g, '(quote $1)')
+      .replace(/`(\(.*\)|\S+)/g, '(quasiquote $1)')
+      .replace(/,@(\(.*\)|\S+)/g, '(unquote-splicing $1)')
+      .replace(/,(\(.*\)|\S+)/g, '(unquote $1)')
       .replace(/\n/g, ' ')
       .replace(/\(/g, ' ( ')
       .replace(/\)/g, ' ) ')
+      .replace(/\s+/g, ' ')
       .trim();
 
 const tokenize = (string) => {
