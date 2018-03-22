@@ -126,6 +126,7 @@ const evalSexp = (sexp, table={}) => {
             return tail.reduce((_, form) => evalSexp(form, table), null);
         }
         if (head === symb('define')) {
+            const [label, val] = tail; // (define label val)
             if (Array.isArray(label)) { // (define (name args) val)
                 // eventually we'll have macros and we can implement this with them
                 // till then, we add the defun-style define here
