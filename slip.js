@@ -142,7 +142,7 @@ const evalSexp = (sexp, table={}) => {
             if (!(label in table)) {
                 throw new Error(`set! requires that ${label} be defined first. Try (define ${label} ${val})`);
             }
-            table[label] = val;
+            table[label] = evalSexp(val, table);
             return null;
         }
 
