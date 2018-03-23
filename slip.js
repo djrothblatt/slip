@@ -125,7 +125,8 @@ const evalSexp = (sexp, table={}) => {
         const [head, ...tail] = sexp;
         // special forms
         if (head === symb('quote')) {
-            return list(...tail[0]);
+            const quoted = tail[0];
+            return Array.isArray(quoted) ? list(...quoted) : quoted;
         }
         if (head === symb('quasiquote')) {
             return expandQuasiquote(tail, table);
