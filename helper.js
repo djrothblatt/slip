@@ -1,6 +1,6 @@
 const symb = (val) => typeof val === 'string' && val[0] !== '"' ? Symbol.for(val) : val;
 const combineTables = (...tables) => Object.assign({}, ...tables);
-const compose2 = (f, g) => x => f(g(x));
+const compose2 = (f, g) => (...x) => f(g(...x));
 const compose = (...fns) => fns.reduce(compose2, identity);
 const flip = (f) => (x, y) => f(y,x);
 const identity = (x) => x;
