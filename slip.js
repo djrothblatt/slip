@@ -195,7 +195,14 @@ const evalSexp = (sexp, table={}) => {
         return operator(...operands);
     }
 
-    return table[sexp] || sexp;
+    const entry = table[sexp];
+    if (entry) {
+        return entry;
+    }
+    if (typeof sexp === 'symbol') {
+        throw { name: 'UnboundVariableError', message: `${sexp} is not bound` };
+    }
+    return sexp;
 };
 
 const stringToSexp = compose(parseSexp, lexSexp);
