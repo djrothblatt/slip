@@ -6,8 +6,8 @@ const flip = (f) => (x, y) => f(y,x);
 const identity = (x) => x;
 const partial = (f, ...args) => (...moreArgs) => f(...args, ...moreArgs);
 const zip = (xs, ys) => xs.map((x, i) => [x, ys[i]]);
-const unzip = (xs) => xs.reduce((out, [left, right]) => [(out[0]).concat([left]),
-                                                       (out[1]).concat([right])],
+const unzip = (xs) => xs.reduce(([outLeft, outRight], [left, right]) => [outLeft.concat([left]),
+                                                                       outRight.concat([right])],
                                [[], []]);
 const symbKeys = (pairs) => pairs.map(([k, v]) => [symb(k), v]);
 const pairsToObject = (pairs) =>
