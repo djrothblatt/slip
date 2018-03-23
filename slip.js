@@ -163,7 +163,7 @@ const evalSexp = (sexp, table={}) => {
             );
             return evalSexp(body, { ...table, ...evaluatedBindings });
         }
-        if (['lambda', 'λ', 'ל'].includes(head)) {
+        if (lambdaSymbols.includes(head)) {
             const [args, body] = tail; // (lambda (arg1 arg2 ...) body)
             return (...params) => evalSexp(body, { ...table, ...zipObject(args, params) });
         }
