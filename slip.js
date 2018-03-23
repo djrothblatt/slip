@@ -134,7 +134,10 @@ const evalSexp = (sexp, table={}) => {
             return Array.isArray(quoted) ? list(...quoted) : quoted;
         }
         if (head === symb('quasiquote')) {
-            return expandQuasiquote(tail, table);
+            const [ quasiquoted ] = tail;
+            return Array.isArray(quasiquoted) ?
+                expandQuasiquote(quasiquoted, table) :
+                quasiquoted;
         }
         if (head === symb('if')) {
             const [test, consequent, alternative] = tail;
