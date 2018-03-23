@@ -91,7 +91,7 @@ const tokenize = (string) => {
 const lexSexp = compose(tokenize, preprocessString);
 
 const parseToken = (token) => {
-    const maybeNumber = parseFloat(token);
+    const maybeNumber = parseFloat(token.toString());
     if (!Number.isNaN(maybeNumber)) {
         return maybeNumber;
     }
